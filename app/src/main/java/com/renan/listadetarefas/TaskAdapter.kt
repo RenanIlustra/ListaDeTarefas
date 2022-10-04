@@ -10,18 +10,19 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.renan.listadetarefas.databinding.ResItemTaskBinding
 
-class TaskAdapter(
-    private val tasks : MutableList<Task>
+class TaskAdapter(private val onDeleteClick: (Task) -> Unit) :
+    RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-) :RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+    private val tasks = mutableListOf<Task>()
 
     inner class TaskViewHolder(
         itemView: ResItemTaskBinding
     ) : RecyclerView.ViewHolder(itemView.root) {
 
-        private val imgBtnDeleteTask : ImageButton
-        private val clTask : ConstraintLayout
-        private val tvTitleTask :TextView
+        //Elemento que vão ser alterados
+        private val imgBtnDeleteTask: ImageButton
+        private val clTask: ConstraintLayout
+        private val tvTitleTask: TextView
 
         init {
             imgBtnDeleteTask = itemView.imgBtnDeleteTask
@@ -30,30 +31,57 @@ class TaskAdapter(
 
         }
 
-        fun bind(task:Task){
+        fun bind(
+            task: Task,
+            onDeleteClick: (Task) -> Unit
+        ) {
             tvTitleTask.text = task.title
+            imgBtnDeleteTask.setOnClickListener {
+                onDeleteClick(task)
+            }
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
+        //Modelo fixo para criar ViewHolder
         return TaskViewHolder(
             ResItemTaskBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )        )
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
+        //Usa a funçaõ bind do TaskViewHolder e o position na list de task que vem pelo construtor do ADAPTER
         holder.bind(
-            tasks[position]
+            tasks[position],
+            onDeleteClick
         )
     }
 
     override fun getItemCount(): Int {
         return tasks.size
     }
+
+
+    fun addTask(task: Task) {
+        tasks.add(task)
+        //Esta notificando o Recycler que a ultima posição mudou ! (tamanho total - 1 pq o array começa no zero)
+        notifyItemInserted(tasks.size - 1)
+        return
+
+    }
+
+    fun deleteTask(task: Task){
+        //Pegar a posição do item deletado para passar no notifyItemRemoved
+        val deletedPosition = tasks.indexOf(task)
+        tasks.remove(task)
+        notifyItemRemoved(deletedPosition)
+    }
+
 
 
 }
