@@ -34,10 +34,18 @@ class MainActivity : AppCompatActivity() {
     private fun setupAdapter() {
 
         //Como no construtor foi colocado uma funçao UNIT que recebe uma TASK, ao se criar um TaskAdapter pode colocar um função junto que utilize TASK
-        adapter = TaskAdapter() {
-                //Deleta Task
+        adapter = TaskAdapter(onDeleteClick = {
+            //Deleta Task
                 task -> adapter.deleteTask(task)
-        }
+        },
+            onClick = {task ->
+                //Ao clicar na Task inverte o status de feita ou não feita
+                task.done = !(task.done)
+
+                adapter.updateTask(task)
+
+            }
+        )
         //Vinculando o adapter
         binding.rvTasks.adapter = adapter
     }

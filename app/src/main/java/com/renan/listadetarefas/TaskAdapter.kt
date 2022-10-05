@@ -7,10 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.view.menu.MenuView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.renan.listadetarefas.databinding.ResItemTaskBinding
 
-class TaskAdapter(private val onDeleteClick: (Task) -> Unit) :
+class TaskAdapter(
+    private val onClick : (Task) -> Unit,
+    private val onDeleteClick: (Task) -> Unit) :
     RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     private val tasks = mutableListOf<Task>()
@@ -33,11 +36,26 @@ class TaskAdapter(private val onDeleteClick: (Task) -> Unit) :
 
         fun bind(
             task: Task,
+            onClick: (Task) -> Unit,
             onDeleteClick: (Task) -> Unit
+
         ) {
             tvTitleTask.text = task.title
+
             imgBtnDeleteTask.setOnClickListener {
                 onDeleteClick(task)
+            }
+
+            clTask.setOnClickListener {
+                onClick(task)
+            }
+
+            if(task.done){
+
+                tvTitleTask.setTextColor(ContextCompat.getColor(itemView.context,R.color.white))
+
+            }else{
+                tvTitleTask.setTextColor(ContextCompat.getColor(itemView.context,R.color.black))
             }
         }
 
@@ -58,7 +76,9 @@ class TaskAdapter(private val onDeleteClick: (Task) -> Unit) :
         //Usa a funçaõ bind do TaskViewHolder e o position na list de task que vem pelo construtor do ADAPTER
         holder.bind(
             tasks[position],
+            onClick,
             onDeleteClick
+
         )
     }
 
@@ -82,6 +102,13 @@ class TaskAdapter(private val onDeleteClick: (Task) -> Unit) :
         notifyItemRemoved(deletedPosition)
     }
 
+    fun updateTask(task: Task) {
+
+        val updatePosition = tasks.indexOf(task)
+        tasks[updatePosition] = task
+        notifyItemChanged(updatePosition)
+
+    }
 
 
 }
