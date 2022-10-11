@@ -51,11 +51,13 @@ class TaskAdapter(
             }
 
             if(task.done){
-
                 tvTitleTask.setTextColor(ContextCompat.getColor(itemView.context,R.color.white))
-
+                imgBtnDeleteTask.setImageResource(R.drawable.delete_white)
+                clTask.setBackgroundColor(ContextCompat.getColor(itemView.context,R.color.success_green))
             }else{
                 tvTitleTask.setTextColor(ContextCompat.getColor(itemView.context,R.color.black))
+                imgBtnDeleteTask.setImageResource(R.drawable.delete_black)
+                clTask.setBackgroundColor(ContextCompat.getColor(itemView.context,R.color.bright_gray))
             }
         }
 
